@@ -1,0 +1,54 @@
+/* Custom styles for modals and animations */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close:hover {
+    transform: rotate(90deg);
+    transition: transform 0.3s;
+}
+
+/* Custom colors for Kuppiya */
+.kuppiya-primary {
+    background-color: #4f46e5;
+}
+
+.kuppiya-secondary {
+    background-color: #f8fafc;
+}
+
+.kuppiya-accent {
+    color: #f59e0b;
+}
+
+.btn-primary {
+    background-color: #4f46e5;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4338ca;
+}
