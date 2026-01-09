@@ -27,9 +27,9 @@
                 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-                    <a href="#about" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">About Us</a>
-                    <a href="#contact" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Contact</a>
+                    <a href="../pages/index.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
+                    <a href="../pages/about.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">About Us</a>
+                    <a href="../pages/contact.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Contact</a>
                 </div>
                 
                 <!-- Search and Login Section -->
