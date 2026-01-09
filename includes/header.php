@@ -87,10 +87,10 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="./index.php"
                         class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-                    <a href="./pages/about.php"
+                    <a href="../pages/about.php"
                         class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">About
                         Us</a>
-                    <a href="./pages/contact.php"
+                    <a href="../pages/contact.php"
                         class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Contact</a>
                 </div>
 
