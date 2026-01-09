@@ -1,4 +1,4 @@
-<?php include '../includes/header.php'; ?>
+<?php include './includes/header.php'; ?>
 
 <main class="flex-grow">
     <section class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-20 px-6 animate-fade-in">
@@ -53,4 +53,4 @@
     </section>
 </main>
 
-<?php include '../includes/footer.php'; ?>
+<?php include './includes/footer.php'; ?>
