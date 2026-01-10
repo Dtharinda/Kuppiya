@@ -37,47 +37,40 @@
         const mobileSearchBtn = document.getElementById('mobile-search-btn');
         const mobileSearch = document.getElementById('mobile-search');
 
-        // Open Login Modal
-        loginBtn.addEventListener('click', () => {
-            loginModal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        });
+        // Open Modals
+document.getElementById('login-btn').onclick = () => {
+    loginModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
 
-        // Close Login Modal
-        closeLoginModal.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
+// Close Buttons
+document.getElementById('close-login-modal').onclick = () => {
+    loginModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+};
 
-        // Close Register Modal
-        closeRegisterModal.addEventListener('click', () => {
-            registerModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
+document.getElementById('close-register-modal').onclick = () => {
+    registerModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+};
 
-        // Show Register Modal from Login Modal
-        showRegisterBtn.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-            registerModal.style.display = 'block';
-        });
+// Switch Between Modals
+document.getElementById('show-register').onclick = () => {
+    loginModal.classList.remove('active');
+    registerModal.classList.add('active');
+};
 
-        // Show Login Modal from Register Modal
-        showLoginBtn.addEventListener('click', () => {
-            registerModal.style.display = 'none';
-            loginModal.style.display = 'block';
-        });
+document.getElementById('show-login').onclick = () => {
+    registerModal.classList.remove('active');
+    loginModal.classList.add('active');
+};
 
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === loginModal) {
-                loginModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-            if (e.target === registerModal) {
-                registerModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        });
+// Close when clicking outside
+window.onclick = (e) => {
+    if (e.target === loginModal) loginModal.classList.remove('active');
+    if (e.target === registerModal) registerModal.classList.remove('active');
+    if (e.target.classList.contains('active')) document.body.style.overflow = 'auto';
+};
 
         // Toggle Mobile Menu
         mobileMenuBtn.addEventListener('click', () => {
@@ -98,22 +91,6 @@
                 mobileSearch.classList.add('hidden');
             }
         });
-
-        // Form Submissions
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            // In a real application, you would send this to a PHP backend
-            console.log('Login attempt with:', { email, password });
-            alert('Login functionality would connect to PHP backend. Email: ' + email);
-
-            // Close modal after submission
-            loginModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-
         document.getElementById('register-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('register-name').value;
