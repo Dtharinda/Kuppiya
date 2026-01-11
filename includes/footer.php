@@ -38,39 +38,39 @@
         const mobileSearch = document.getElementById('mobile-search');
 
         // Open Modals
-document.getElementById('login-btn').onclick = () => {
-    loginModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-};
+        document.getElementById('login-btn').onclick = () => {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
 
-// Close Buttons
-document.getElementById('close-login-modal').onclick = () => {
-    loginModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-};
+        // Close Buttons
+        document.getElementById('close-login-modal').onclick = () => {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
 
-document.getElementById('close-register-modal').onclick = () => {
-    registerModal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-};
+        document.getElementById('close-register-modal').onclick = () => {
+            registerModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
 
-// Switch Between Modals
-document.getElementById('show-register').onclick = () => {
-    loginModal.classList.remove('active');
-    registerModal.classList.add('active');
-};
+        // Switch Between Modals
+        document.getElementById('show-register').onclick = () => {
+            loginModal.classList.remove('active');
+            registerModal.classList.add('active');
+        };
 
-document.getElementById('show-login').onclick = () => {
-    registerModal.classList.remove('active');
-    loginModal.classList.add('active');
-};
+        document.getElementById('show-login').onclick = () => {
+            registerModal.classList.remove('active');
+            loginModal.classList.add('active');
+        };
 
-// Close when clicking outside
-window.onclick = (e) => {
-    if (e.target === loginModal) loginModal.classList.remove('active');
-    if (e.target === registerModal) registerModal.classList.remove('active');
-    if (e.target.classList.contains('active')) document.body.style.overflow = 'auto';
-};
+        // Close when clicking outside
+        window.onclick = (e) => {
+            if (e.target === loginModal) loginModal.classList.remove('active');
+            if (e.target === registerModal) registerModal.classList.remove('active');
+            if (e.target.classList.contains('active')) document.body.style.overflow = 'auto';
+        };
 
         // Toggle Mobile Menu
         mobileMenuBtn.addEventListener('click', () => {
@@ -125,6 +125,24 @@ window.onclick = (e) => {
                     mobileMenu.classList.add('hidden');
                 }
             });
+        });
+
+        // Register form submission debugging
+        document.getElementById('register-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            console.log('Form submission started...');
+
+            // Validate passwords match
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+
+            console.log('Form validation passed, submitting...');
+            this.submit();
         });
     </script>
     </body>

@@ -1,8 +1,40 @@
-[file name]: header.php
-[file content begin]
 <?php
+// Session start කරන්න මුලින්ම
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
+}
+
+// Error display functions
+function showError($message)
+{
+    echo '<div class="error-message fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg z-[9999] max-w-md message-box" style="animation: slideIn 0.3s ease-out;">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+                <div>
+                    <strong class="font-bold">Error!</strong>
+                    <p class="text-sm mt-1">' . htmlspecialchars($message) . '</p>
+                </div>
+                <button class="ml-auto text-red-500 hover:text-red-700 close-message-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+          </div>';
+}
+
+function showSuccess($message)
+{
+    echo '<div class="success-message fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-lg z-[9999] max-w-md message-box" style="animation: slideIn 0.3s ease-out;">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                <div>
+                    <strong class="font-bold">Success!</strong>
+                    <p class="text-sm mt-1">' . htmlspecialchars($message) . '</p>
+                </div>
+                <button class="ml-auto text-green-500 hover:text-green-700 close-message-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+          </div>';
 }
 ?>
 
@@ -13,60 +45,113 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuppiya - Campus Assignment Marketplace</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Modal styles */
+        /* Modal Styles - HIGHER z-index than error messages */
         .modal {
-            display: none !important; 
+            display: none;
             position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background-color: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            /* Error messagesට වඩා ඉහළ z-index */
             align-items: center;
             justify-content: center;
         }
 
         .modal.active {
-            display: flex !important;
+            display: flex;
         }
 
         .modal-content {
-            animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 10000;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 10001;
+            position: relative;
         }
 
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Login Button styles */
-        .btn-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        /* Login Button */
+        .login-btn {
+            background: linear-gradient(to right, #4f46e5, #6366f1);
             color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-weight: bold;
+            transition: all 0.3s;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
+
+        /* Animation for error/success messages - LOWER z-index */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        .error-message,
+        .success-message {
+            z-index: 9999 !important;
+        }
+
+        .modal {}
     </style>
 </head>
 
 <body class="bg-gray-50">
+
+    <!-- Display Error/Success Messages -->
+    <?php
+    // Show session messages
+    if (isset($_SESSION['error'])) {
+        showError($_SESSION['error']);
+        unset($_SESSION['error']);
+    }
+
+    if (isset($_SESSION['success'])) {
+        showSuccess($_SESSION['success']);
+        unset($_SESSION['success']);
+    }
+    ?>
+
     <!-- Navigation Bar -->
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-16">
+
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="index.php" class="flex items-center space-x-2">
@@ -79,50 +164,48 @@ if (session_status() === PHP_SESSION_NONE) {
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="./index.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-                    <a href="../pages/about.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">About Us</a>
-                    <a href="../pages/contact.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Contact</a>
+                    <a href="index.php" class="text-gray-700 hover:text-indigo-600 font-medium">Home</a>
+                    <a href="about.php" class="text-gray-700 hover:text-indigo-600 font-medium">About</a>
+                    <a href="contact.php" class="text-gray-700 hover:text-indigo-600 font-medium">Contact</a>
                 </div>
 
-                <!-- Search and Login Section -->
+                <!-- User Section -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search Bar -->
-                    <div class="hidden md:block relative">
-                        <input type="text" placeholder="Search assignments..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64">
-                        <div class="absolute left-3 top-2.5 text-gray-400">
-                            <i class="fas fa-search"></i>
+                    <!-- Search -->
+                    <div class="hidden md:block">
+                        <div class="relative">
+                            <input type="text" placeholder="Search..."
+                                class="pl-10 pr-4 py-2 border rounded-full w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
                         </div>
                     </div>
 
-                    <!-- Mobile Search Button -->
-                    <button id="mobile-search-btn" class="md:hidden text-gray-600">
-                        <i class="fas fa-search text-lg"></i>
-                    </button>
-
-                    <!-- Login Button -->
-                    <div class="flex items-center space-x-4">
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <div class="flex items-center bg-gray-100 px-4 py-2 rounded-2xl border border-gray-200">
-                                <div class="flex flex-col text-right mr-3">
-                                    <span class="text-xs text-gray-500 font-semibold uppercase">Welcome</span>
-                                    <span class="text-sm font-bold text-indigo-700"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                                </div>
-                                
-                                <div class="flex items-center space-x-2 border-l pl-3 ml-1 border-gray-300">
-                                    <a href="dashboard.php" class="p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition shadow-md" title="Dashboard">
-                                        <i class="fas fa-th-large"></i>
-                                    </a>
-                                    <a href="../backend/logout.php" class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition" title="Logout">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                    </a>
-                                </div>
+                    <!-- Login/User Info -->
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <!-- User is LOGGED IN -->
+                        <div class="flex items-center bg-gray-100 px-4 py-2 rounded-2xl">
+                            <div class="text-right mr-3">
+                                <p class="text-xs text-gray-500">Welcome</p>
+                                <p class="text-sm font-bold text-indigo-700">
+                                    <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?>
+                                </p>
                             </div>
-                        <?php else: ?>
-                            <button id="login-btn" class="btn-primary px-6 py-2.5 rounded-full font-bold shadow-lg transition-all duration-300">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Login
-                            </button>
-                        <?php endif; ?>
-                    </div>
+                            <div class="flex items-center space-x-2 border-l pl-3">
+                                <a href="dashboard.php" class="p-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">
+                                    <i class="fas fa-th-large"></i>
+                                </a>
+                                <a href="../backend/logout.php"
+                                    class="p-2 bg-red-100 text-red-600 rounded-xl hover:bg-red-200">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- User is NOT logged in - Show Login Button -->
+                        <button id="show-login-btn" class="login-btn">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </button>
+                    <?php endif; ?>
 
                     <!-- Mobile Menu Button -->
                     <button id="mobile-menu-btn" class="md:hidden text-gray-600">
@@ -130,102 +213,220 @@ if (session_status() === PHP_SESSION_NONE) {
                     </button>
                 </div>
             </div>
-
-            <!-- Mobile Search Bar (Hidden by default) -->
-            <div id="mobile-search" class="md:hidden mt-2 hidden">
-                <div class="relative">
-                    <input type="text" placeholder="Search assignments..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                    <div class="absolute left-3 top-2.5 text-gray-400">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile Menu (Hidden by default) -->
-            <div id="mobile-menu" class="md:hidden mt-4 pb-4 hidden">
-                <div class="flex flex-col space-y-4">
-                    <a href="./index.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Home</a>
-                    <a href="../pages/about.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">About Us</a>
-                    <a href="../pages/contact.php" class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200">Contact</a>
-                </div>
-            </div>
         </div>
     </nav>
 
     <!-- Login Modal -->
     <div id="login-modal" class="modal">
-        <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Login to Kuppiya</h2>
-                    <button id="close-login-modal" class="modal-close text-gray-500 hover:text-gray-700 text-2xl">
-                        <i class="fas fa-times"></i>
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Login to Kuppiya</h2>
+                <button id="close-login-modal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form action="../backend/login_backend.php" method="POST">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" name="email" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="your@email.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" name="password" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" name="login"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                        Login
                     </button>
                 </div>
 
-                <form id="login-form" action="../backend/login_backend.php" method="POST" class="space-y-4">
-                    <div>
-                        <label for="login-email" class="block text-gray-700 font-medium mb-2">Email</label>
-                        <input type="email" name="email" id="login-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="student@campus.edu" required>
-                    </div>
-
-                    <div>
-                        <label for="login-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" name="password" id="login-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="••••••••" required>
-                    </div>
-
-                    <button type="submit" name="login" class="w-full btn-primary py-3 rounded-lg font-medium">Login</button>
-
-                    <div class="text-center mt-4">
-                        <p class="text-gray-600">Don't have an account?
-                            <button type="button" id="show-register" class="text-indigo-600 hover:text-indigo-800 font-medium">Register here</button>
-                        </p>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-4 text-center">
+                    <p class="text-gray-600">
+                        Don't have an account?
+                        <button type="button" id="show-register-btn" class="text-indigo-600 font-bold hover:underline">
+                            Register here
+                        </button>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Register Modal -->
     <div id="register-modal" class="modal">
-        <div class="modal-content bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
-                    <button id="close-register-modal" class="modal-close text-gray-500 hover:text-gray-700 text-2xl">
-                        <i class="fas fa-times"></i>
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
+                <button id="close-register-modal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form action="../backend/register_backend.php" method="POST">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Username</label>
+                        <input type="text" name="username" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Your name">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" name="email" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="your@email.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" name="password" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="••••••••">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" name="confirm_password" required
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" name="register" value="1"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                        Create Account
                     </button>
                 </div>
 
-                <form id="register-form" action="../backend/register_backend.php" method="POST" class="space-y-4">
-                    <div>
-                        <label for="register-username" class="block text-gray-700 font-medium mb-2">Username</label>
-                        <input type="text" name="username" id="register-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Your Name" required>
-                    </div>
-
-                    <div>
-                        <label for="register-email" class="block text-gray-700 font-medium mb-2">Email</label>
-                        <input type="email" name="email" id="register-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="student@campus.edu" required>
-                    </div>
-
-                    <div>
-                        <label for="register-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" name="password" id="register-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="••••••••" required minlength="8">
-                    </div>
-
-                    <div>
-                        <label for="register-confirm-password" class="block text-gray-700 font-medium mb-2">Confirm Password</label>
-                        <input type="password" name="confirm_password" id="register-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="••••••••" required>
-                    </div>
-
-                    <button type="submit" name="register" class="w-full btn-primary py-3 rounded-lg font-medium">Create Account</button>
-
-                    <div class="text-center mt-4">
-                        <p class="text-gray-600">Already have an account?
-                            <button type="button" id="show-login" class="text-indigo-600 hover:text-indigo-800 font-medium">Login here</button>
-                        </p>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-4 text-center">
+                    <p class="text-gray-600">
+                        Already have an account?
+                        <button type="button" id="show-login-from-register"
+                            class="text-indigo-600 font-bold hover:underline">
+                            Login here
+                        </button>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
+
+    <script>
+        // Modal Elements
+        const loginModal = document.getElementById('login-modal');
+        const registerModal = document.getElementById('register-modal');
+        const showLoginBtn = document.getElementById('show-login-btn');
+        const showRegisterBtn = document.getElementById('show-register-btn');
+        const showLoginFromRegister = document.getElementById('show-login-from-register');
+        const closeLoginModal = document.getElementById('close-login-modal');
+        const closeRegisterModal = document.getElementById('close-register-modal');
+
+        // Function to close specific modal
+        function closeModal(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Function to close all modals
+        function closeAllModals() {
+            [loginModal, registerModal].forEach(modal => {
+                if (modal) modal.classList.remove('active');
+            });
+            document.body.style.overflow = 'auto';
+        }
+
+        // Open Login Modal
+        if (showLoginBtn) {
+            showLoginBtn.addEventListener('click', () => {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        // Open Register Modal from Login
+        if (showRegisterBtn) {
+            showRegisterBtn.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+                registerModal.classList.add('active');
+            });
+        }
+
+        // Open Login Modal from Register
+        if (showLoginFromRegister) {
+            showLoginFromRegister.addEventListener('click', () => {
+                registerModal.classList.remove('active');
+                loginModal.classList.add('active');
+            });
+        }
+
+        // Close Modals
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => closeModal(loginModal));
+        }
+
+        if (closeRegisterModal) {
+            closeRegisterModal.addEventListener('click', () => closeModal(registerModal));
+        }
+
+        // Close modal when clicking outside (ONLY on modal background)
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target);
+            }
+        });
+
+        // Close error/success messages
+        document.addEventListener('click', function (e) {
+            // Close message when clicking X button
+            if (e.target.closest('.close-message-btn')) {
+                const message = e.target.closest('.error-message, .success-message');
+                if (message) {
+                    message.style.animation = 'fadeOut 0.3s ease-out';
+                    setTimeout(() => {
+                        if (message.parentNode) message.remove();
+                    }, 300);
+                }
+            }
+        });
+
+        // Auto-hide messages after 5 seconds (BUT DON'T CLOSE MODALS)
+        setTimeout(() => {
+            document.querySelectorAll('.error-message, .success-message').forEach(message => {
+                message.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (message.parentNode) message.remove();
+                }, 300);
+            });
+        }, 5000);
+
+        // Prevent modals from closing when clicking inside modal content
+        document.querySelectorAll('.modal-content').forEach(content => {
+            content.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                // Add mobile menu functionality here if needed
+                console.log('Mobile menu clicked');
+            });
+        }
+
+        // Keyboard escape to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllModals();
+            }
+        });
+    </script>

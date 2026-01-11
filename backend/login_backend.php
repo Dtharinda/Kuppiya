@@ -1,56 +1,66 @@
 <?php
-// 1. Session එක ආරම්භ කිරීම (සෑම විටම ගොනුවේ ඉහළින්ම තිබිය යුතුය)
+// 1. Session start කරන්න මුලින්ම
 session_start();
 
-// 2. Database සම්බන්ධතාවය ලබා ගැනීම
-require_once '../includes/kuppiya_db.php'; 
+// 2. Database connection
+require_once '../includes/kuppiya_db.php';
 
+// 3. Check if form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
     
-    // 3. Input දත්ත ලබා ගැනීම සහ පිරිසිදු කිරීම (Security)
-    $email = mysqli_real_escape_string($conn, trim($_POST['email']));
-    $password = $_POST['password'];
-
-    // 4. හිස් තැන් පරීක්ෂාව
+    // 4. Get form data
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    
+    // 5. Validation
     if (empty($email) || empty($password)) {
-        echo "<script>alert('Please fill in all fields!'); window.history.back();</script>";
+        $_SESSION['error'] = "Email and password are required!";
+        header("Location: ../pages/index.php");
         exit();
     }
-
-    // 5. Prepared Statement භාවිතා කර දත්ත ලබා ගැනීම (SQL Injection ආරක්ෂාව)
+    
+    // 6. Check user in database
     $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ?");
+    if (!$stmt) {
+        $_SESSION['error'] = "Database error!";
+        header("Location: ../pages/index.php");
+        exit();
+    }
+    
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    // 6. පරිශීලකයෙකු සිටීදැයි බැලීම
+    
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         
-        // 7. Hash කළ Password එක සත්‍යාපනය කිරීම
+        // 7. Verify password
         if (password_verify($password, $user['password'])) {
-            
-            // 8. Session දත්ත ගබඩා කිරීම (Header එකේ පෙන්වීමට අවශ්‍ය දත්ත)
+            // 8. Set session variables
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $email;
             
-            // සාර්ථක නම් index.php වෙත යොමු කිරීම
-            header("Location: ../pages/index.php"); 
-            exit(); 
+            // 9. Set success message
+            $_SESSION['success'] = "Welcome back, " . $user['username'] . "!";
+            
+            // 10. Redirect to home page
+            header("Location: ../pages/index.php");
+            exit();
+            
         } else {
-            // වැරදි Password එකක් නම්
-            echo "<script>alert('Invalid email or password!'); window.history.back();</script>";
+            $_SESSION['error'] = "Invalid email or password!";
+            header("Location: ../pages/index.php");
             exit();
         }
     } else {
-        // User කෙනෙක් හමු නොවූයේ නම්
-        echo "<script>alert('No account found with this email!'); window.history.back();</script>";
+        $_SESSION['error'] = "No account found with this email!";
+        header("Location: ../pages/index.php");
         exit();
     }
     
-    $stmt->close();
 } else {
-    // නීති විරෝධී ලෙස මෙම පිටුවට පැමිණියහොත් Home එකට යැවීම
+    // If not a POST request, redirect to home
     header("Location: ../pages/index.php");
     exit();
 }
