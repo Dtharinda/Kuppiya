@@ -1,4 +1,10 @@
-<?php include '../includes/header.php'; ?>
+<?php 
+// Start session if not started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include '../includes/header.php'; 
+?>
 
 <main class="flex-grow">
     <section class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-20 px-6 animate-fade-in">

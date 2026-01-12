@@ -1,4 +1,3 @@
-
 <?php
 // error_display.php
 // Include this file in your header.php or index.php
@@ -32,17 +31,4 @@ function showSuccess($message) {
             </div>
           </div>';
 }
-
-// Auto-hide after 5 seconds
-echo '<script>
-setTimeout(function() {
-    document.querySelectorAll(".error-message, .success-message").forEach(function(el) {
-        el.style.transition = "opacity 0.5s";
-        el.style.opacity = "0";
-        setTimeout(function() {
-            if (el.parentNode) el.parentNode.removeChild(el);
-        }, 500);
-    });
-}, 5000);
-</script>';
 ?>

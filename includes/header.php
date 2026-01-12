@@ -63,7 +63,6 @@ function showSuccess($message)
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 10000;
-            /* Error messagesට වඩා ඉහළ z-index */
             align-items: center;
             justify-content: center;
         }
@@ -92,6 +91,8 @@ function showSuccess($message)
             border-radius: 9999px;
             font-weight: bold;
             transition: all 0.3s;
+            border: none;
+            cursor: pointer;
         }
 
         .login-btn:hover {
@@ -99,13 +100,12 @@ function showSuccess($message)
             box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
 
-        /* Animation for error/success messages - LOWER z-index */
+        /* Animation for error/success messages */
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
                 opacity: 0;
             }
-
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -116,18 +116,57 @@ function showSuccess($message)
             from {
                 opacity: 1;
             }
-
             to {
                 opacity: 0;
             }
         }
 
-        .error-message,
-        .success-message {
-            z-index: 9999 !important;
+        /* Fix for modal buttons */
+        button {
+            cursor: pointer;
         }
-
-        .modal {}
+        
+        /* Animation classes for pages */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-hover-scale {
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .card-hover-scale:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-hover-bounce:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn-hover-bounce {
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
     </style>
 </head>
 
@@ -270,7 +309,7 @@ function showSuccess($message)
                 </button>
             </div>
 
-            <form action="../backend/register_backend.php" method="POST">
+            <form action="../backend/register_backend.php" method="POST" id="register-form">
                 <div class="space-y-4">
                     <div>
                         <label class="block text-gray-700 mb-2">Username</label>
@@ -288,19 +327,19 @@ function showSuccess($message)
 
                     <div>
                         <label class="block text-gray-700 mb-2">Password</label>
-                        <input type="password" name="password" required
+                        <input type="password" name="password" required id="register-password"
                             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             placeholder="••••••••">
                     </div>
 
                     <div>
                         <label class="block text-gray-700 mb-2">Confirm Password</label>
-                        <input type="password" name="confirm_password" required
+                        <input type="password" name="confirm_password" required id="register-confirm-password"
                             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             placeholder="••••••••">
                     </div>
 
-                    <button type="submit" name="register" value="1"
+                    <button type="submit" name="register"
                         class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
                         Create Account
                     </button>
@@ -331,8 +370,10 @@ function showSuccess($message)
 
         // Function to close specific modal
         function closeModal(modal) {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
         }
 
         // Function to close all modals
@@ -346,24 +387,30 @@ function showSuccess($message)
         // Open Login Modal
         if (showLoginBtn) {
             showLoginBtn.addEventListener('click', () => {
-                loginModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                if (loginModal) {
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
             });
         }
 
         // Open Register Modal from Login
         if (showRegisterBtn) {
             showRegisterBtn.addEventListener('click', () => {
-                loginModal.classList.remove('active');
-                registerModal.classList.add('active');
+                if (loginModal && registerModal) {
+                    loginModal.classList.remove('active');
+                    registerModal.classList.add('active');
+                }
             });
         }
 
         // Open Login Modal from Register
         if (showLoginFromRegister) {
             showLoginFromRegister.addEventListener('click', () => {
-                registerModal.classList.remove('active');
-                loginModal.classList.add('active');
+                if (registerModal && loginModal) {
+                    registerModal.classList.remove('active');
+                    loginModal.classList.add('active');
+                }
             });
         }
 
@@ -397,7 +444,7 @@ function showSuccess($message)
             }
         });
 
-        // Auto-hide messages after 5 seconds (BUT DON'T CLOSE MODALS)
+        // Auto-hide messages after 5 seconds
         setTimeout(() => {
             document.querySelectorAll('.error-message, .success-message').forEach(message => {
                 message.style.animation = 'fadeOut 0.3s ease-out';
@@ -414,11 +461,11 @@ function showSuccess($message)
             });
         });
 
-        // Mobile menu toggle
+        // Mobile menu toggle (simplified version)
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
-                // Add mobile menu functionality here if needed
+                // You can add mobile menu functionality here if needed
                 console.log('Mobile menu clicked');
             });
         }
@@ -429,4 +476,19 @@ function showSuccess($message)
                 closeAllModals();
             }
         });
+
+        // Register form validation
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('register-password')?.value;
+                const confirmPassword = document.getElementById('register-confirm-password')?.value;
+
+                if (password && confirmPassword && password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Passwords do not match!');
+                    return false;
+                }
+            });
+        }
     </script>

@@ -13,8 +13,8 @@
             </div>
             <div class="flex space-x-6">
                 <a href="index.php" class="text-gray-300 hover:text-white">Home</a>
-                <a href="#about" class="text-gray-300 hover:text-white">About Us</a>
-                <a href="#contact" class="text-gray-300 hover:text-white">Contact</a>
+                <a href="about.php" class="text-gray-300 hover:text-white">About Us</a>
+                <a href="contact.php" class="text-gray-300 hover:text-white">Contact</a>
                 <a href="#" class="text-gray-300 hover:text-white">Terms</a>
                 <a href="#" class="text-gray-300 hover:text-white">Privacy</a>
             </div>
@@ -23,6 +23,7 @@
             <p>&copy; <?php echo date('Y'); ?> Kuppiya. All rights reserved. For academic purposes only.</p>
         </div>
     </div>
+    
     <script>
         // DOM Elements
         const loginBtn = document.getElementById('login-btn');
@@ -37,79 +38,94 @@
         const mobileSearchBtn = document.getElementById('mobile-search-btn');
         const mobileSearch = document.getElementById('mobile-search');
 
-        // Open Modals
-        document.getElementById('login-btn').onclick = () => {
-            loginModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
+        // Only run if elements exist
+        if (loginBtn && loginModal && closeLoginModal) {
+            loginBtn.onclick = () => {
+                loginModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
 
-        // Close Buttons
-        document.getElementById('close-login-modal').onclick = () => {
-            loginModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        };
+            closeLoginModal.onclick = () => {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            };
+        }
 
-        document.getElementById('close-register-modal').onclick = () => {
-            registerModal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        };
+        if (closeRegisterModal && registerModal) {
+            closeRegisterModal.onclick = () => {
+                registerModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            };
+        }
 
-        // Switch Between Modals
-        document.getElementById('show-register').onclick = () => {
-            loginModal.classList.remove('active');
-            registerModal.classList.add('active');
-        };
+        if (showRegisterBtn && loginModal && registerModal) {
+            showRegisterBtn.onclick = () => {
+                loginModal.classList.remove('active');
+                registerModal.classList.add('active');
+            };
+        }
 
-        document.getElementById('show-login').onclick = () => {
-            registerModal.classList.remove('active');
-            loginModal.classList.add('active');
-        };
+        if (showLoginBtn && loginModal && registerModal) {
+            showLoginBtn.onclick = () => {
+                registerModal.classList.remove('active');
+                loginModal.classList.add('active');
+            };
+        }
 
         // Close when clicking outside
         window.onclick = (e) => {
-            if (e.target === loginModal) loginModal.classList.remove('active');
-            if (e.target === registerModal) registerModal.classList.remove('active');
-            if (e.target.classList.contains('active')) document.body.style.overflow = 'auto';
+            if (e.target === loginModal) {
+                loginModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+            if (e.target === registerModal) {
+                registerModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
         };
 
-        // Toggle Mobile Menu
-        mobileMenuBtn.addEventListener('click', () => {
-            if (mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.remove('hidden');
-                mobileSearch.classList.add('hidden'); // Hide search if open
-            } else {
-                mobileMenu.classList.add('hidden');
-            }
-        });
+        // Toggle Mobile Menu - check if elements exist
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    if (mobileSearch) mobileSearch.classList.add('hidden'); // Hide search if open
+                } else {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        }
 
-        // Toggle Mobile Search
-        mobileSearchBtn.addEventListener('click', () => {
-            if (mobileSearch.classList.contains('hidden')) {
-                mobileSearch.classList.remove('hidden');
-                mobileMenu.classList.add('hidden'); // Hide menu if open
-            } else {
-                mobileSearch.classList.add('hidden');
-            }
-        });
-        document.getElementById('register-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const role = document.getElementById('register-role').value;
+        // Toggle Mobile Search - check if elements exist
+        if (mobileSearchBtn && mobileSearch) {
+            mobileSearchBtn.addEventListener('click', () => {
+                if (mobileSearch.classList.contains('hidden')) {
+                    mobileSearch.classList.remove('hidden');
+                    if (mobileMenu) mobileMenu.classList.add('hidden'); // Hide menu if open
+                } else {
+                    mobileSearch.classList.add('hidden');
+                }
+            });
+        }
 
-            // In a real application, you would send this to a PHP backend
-            console.log('Registration attempt with:', { name, email, password, role });
-            alert('Registration would be processed by PHP backend. Name: ' + name);
+        // Register form submission - check if element exists
+        const registerForm = document.getElementById('register-form');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('register-password')?.value;
+                const confirmPassword = document.getElementById('register-confirm-password')?.value;
 
-            // Close modal after submission
-            registerModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
+                if (password && confirmPassword && password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Passwords do not match!');
+                    return false;
+                }
+            });
+        }
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
 
@@ -122,30 +138,11 @@
                     });
 
                     // Close mobile menu if open
-                    mobileMenu.classList.add('hidden');
+                    if (mobileMenu) mobileMenu.classList.add('hidden');
                 }
             });
         });
-
-        // Register form submission debugging
-        document.getElementById('register-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            console.log('Form submission started...');
-
-            // Validate passwords match
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm-password').value;
-
-            if (password !== confirmPassword) {
-                alert('Passwords do not match!');
-                return false;
-            }
-
-            console.log('Form validation passed, submitting...');
-            this.submit();
-        });
     </script>
-    </body>
-
-    </html>
 </footer>
+</body>
+</html>
