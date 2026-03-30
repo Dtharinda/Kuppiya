@@ -1,10 +1,10 @@
 <?php
-require_once 'config.php';
+require_once '../config.php';
 
 // Auth Protection
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     // Redirect non-admins out
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
 
@@ -19,8 +19,8 @@ $purchaseCount = $pdo->query("SELECT COUNT(*) FROM purchases")->fetchColumn();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Kuppiya</title>
-    <link rel="stylesheet" href="./css/index.css">
-    <link rel="stylesheet" href="./css/animations.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/animations.css">
     <style>
         .admin-sidebar { width: 250px; border-right: 1px solid var(--border); height: calc(100vh - 80px); position: sticky; top: 0; padding: 2rem; background: rgba(0,0,0,0.2); }
         .admin-nav-link { display: block; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 0.5rem; color: var(--text-muted); transition: all 0.2s; }
@@ -30,10 +30,10 @@ $purchaseCount = $pdo->query("SELECT COUNT(*) FROM purchases")->fetchColumn();
 <body>
     <nav class="navbar scrolled" style="border-bottom: 1px solid var(--border-glow); position: static;">
         <div class="container navbar-content justify-between" style="max-width: 100%;">
-            <a href="index.php" class="logo text-gradient" id="kuppiya-logo">Kuppiya <span style="font-size: 0.5em; color: var(--secondary)">ADMIN</span></a>
+            <a href="../index.php" class="logo text-gradient" id="kuppiya-logo">Kuppiya <span style="font-size: 0.5em; color: var(--secondary)">ADMIN</span></a>
             <div class="nav-actions flex gap-4 items-center">
                 <span class="text-sm text-muted">Administrator</span>
-                <a href="processes/logout.php" class="btn btn-secondary text-sm" style="padding: 0.5rem 1rem;">Logout</a>
+                <a href="../processes/logout.php" class="btn btn-secondary text-sm" style="padding: 0.5rem 1rem;">Logout</a>
             </div>
         </div>
     </nav>
@@ -43,8 +43,8 @@ $purchaseCount = $pdo->query("SELECT COUNT(*) FROM purchases")->fetchColumn();
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <h4 class="mb-4 text-xs text-subtle font-bold tracking-wider">MANAGEMENT</h4>
-            <a href="admin.php" class="admin-nav-link active">Dashboard</a>
-            <a href="index.php" class="admin-nav-link">Main Site</a>
+            <a href="index.php" class="admin-nav-link active">Dashboard</a>
+            <a href="../index.php" class="admin-nav-link">Main Site</a>
         </aside>
 
         <!-- Main Content -->

@@ -19,6 +19,6 @@
         </div>
     </footer>
 
-    <script src="./js/app.js"></script>
+    <script src="<?php echo defined('ASSET_PATH') ? ASSET_PATH : './'; ?>js/app.js"></script>
 </body>
 </html>
