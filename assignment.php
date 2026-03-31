@@ -7,7 +7,9 @@ $stmt->execute([$id]);
 $assignment = $stmt->fetch();
 
 if (!$assignment) {
-    die("Assignment not found.");
+    $_SESSION['error'] = "Assignment not found.";
+    header("Location: store.php");
+    exit;
 }
 
 require_once 'includes/header.php';

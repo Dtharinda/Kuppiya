@@ -9,7 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $password = trim($_POST['password'] ?? '');
         
         if (empty($email) || empty($password)) {
-            die("Email and password are required.");
+            $_SESSION['error'] = "Email and password are required.";
+            header("Location: ../index.php");
+            exit;
         }
         
         $stmt = $pdo->prepare("SELECT id, username, password_hash, role FROM users WHERE email = ?");
@@ -29,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             }
             exit;
         } else {
-            die("Invalid email or password. <a href='../index.php'>Go back</a>");
+            $_SESSION['error'] = "Invalid email or password.";
+            header("Location: ../index.php");
+            exit;
         }
     }
 }

@@ -111,5 +111,34 @@ $purchaseCount = $pdo->query("SELECT COUNT(*) FROM purchases")->fetchColumn();
         </main>
     </div>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            <?php if (isset($_SESSION['error'])): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '<?= addslashes(htmlspecialchars($_SESSION['error'])) ?>',
+                    background: '#1a1a2e',
+                    color: '#fff',
+                    confirmButtonColor: '#9d4edd'
+                });
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '<?= addslashes(htmlspecialchars($_SESSION['success'])) ?>',
+                    background: '#1a1a2e',
+                    color: '#fff',
+                    confirmButtonColor: '#9d4edd'
+                });
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+        });
+    </script>
 </body>
 </html>
