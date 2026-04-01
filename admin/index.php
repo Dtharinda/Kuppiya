@@ -70,42 +70,95 @@ $purchaseCount = $pdo->query("SELECT COUNT(*) FROM purchases")->fetchColumn();
                 </div>
             </div>
 
-            <!-- Upload Area Section (Mock UI) -->
+            <!-- Upload Area Section -->
             <div class="glass-panel mt-8" style="padding: 2.5rem;">
                 <h3 class="mb-6 text-xl">Quick Upload</h3>
-                <form class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <form action="upload_process.php" method="POST" enctype="multipart/form-data" class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                     <div>
                         <div class="input-group">
                             <label class="form-label">Assignment Title</label>
-                            <input type="text" class="form-input" placeholder="e.g. Advanced Operating Systems">
+                            <input type="text" name="title" class="form-input" placeholder="e.g. Advanced Operating Systems" required>
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Category</label>
-                            <select class="form-input">
-                                <option>Computer Science</option>
-                                <option>Business</option>
-                                <option>Engineering</option>
-                            </select>
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-input" rows="3" placeholder="Brief details about the assignment..."></textarea>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="input-group w-full">
+                                <label class="form-label">Category</label>
+                                <select name="category" class="form-input" required>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                </select>
+                            </div>
+                            <div class="input-group w-full">
+                                <label class="form-label">Price ($)</label>
+                                <input type="number" name="price" class="form-input" placeholder="0.00" step="0.01" required>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <label class="form-label">Price ($)</label>
-                            <input type="number" class="form-input" placeholder="0.00" step="0.01">
+                            <label class="form-label">Download Password (One-Time Use)</label>
+                            <input type="text" name="download_password" class="form-input" placeholder="e.g. secret123" required>
                         </div>
                     </div>
                     <div>
                         <div class="input-group h-full">
                             <label class="form-label">Upload ZIP/PDF File</label>
-                            <div class="form-input" style="height: 100%; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed rgba(255,255,255,0.2); background: rgba(0,0,0,0.2);">
+                            <div class="form-input" style="height: 100%; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); position: relative;">
                                 <span style="font-size: 2rem; opacity: 0.5;">📁</span>
-                                <span class="text-sm text-subtle mt-2">Drag and drop file here</span>
-                                <input type="file" style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;">
+                                <span class="text-sm text-subtle mt-2" id="file-name-display">Click to select file</span>
+                                <input type="file" name="assignment_file" onchange="document.getElementById('file-name-display').innerText = this.files[0] ? this.files[0].name : 'Click to select file'" style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;" required>
                             </div>
                         </div>
                     </div>
                     <div style="grid-column: span 2;">
-                        <button class="btn btn-primary" type="button" style="width: 200px;">Publish Assignment</button>
+                        <button class="btn btn-primary" type="submit" style="width: 250px;">Publish Assignment</button>
                     </div>
                 </form>
+            </div>
+
+            <!-- Manage Assignments Table -->
+            <div class="glass-panel mt-8" style="padding: 2.5rem;">
+                <h3 class="mb-6 text-xl">Manage Passwords</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">ID</th>
+                                <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Title</th>
+                                <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Current Password</th>
+                                <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $stmt = $pdo->query("SELECT id, title, download_password FROM assignments ORDER BY created_at DESC");
+                            while ($row = $stmt->fetch()):
+                            ?>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 1rem;">#<?= $row['id'] ?></td>
+                                <td style="padding: 1rem;"><?= htmlspecialchars($row['title']) ?></td>
+                                <td style="padding: 1rem;">
+                                    <?php if (empty($row['download_password'])): ?>
+                                        <span class="text-xs" style="color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">Used / None</span>
+                                    <?php else: ?>
+                                        <span class="text-xs" style="color: #22c55e; background: rgba(34,197,94,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;"><?= htmlspecialchars($row['download_password']) ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <form action="update_password.php" method="POST" class="flex gap-2">
+                                        <input type="hidden" name="assignment_id" value="<?= $row['id'] ?>">
+                                        <input type="text" name="new_password" class="form-input" style="padding: 0.4rem; font-size: 0.8rem; width: 120px;" placeholder="New password" required>
+                                        <button type="submit" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </main>

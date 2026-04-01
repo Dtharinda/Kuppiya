@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS assignments (
     category VARCHAR(50),
     price DECIMAL(10, 2) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
+    download_password VARCHAR(255) NULL,
     author_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL
